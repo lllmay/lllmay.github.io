@@ -316,6 +316,14 @@ h1.title{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:600;line-height:1.25;let
 .lb img{transition:opacity .25s}
 @media(max-width:980px){.camps2{grid-template-columns:repeat(2,1fr)}.cv-hero{grid-template-columns:1fr;gap:44px}.cv-steps{grid-template-columns:1fr;gap:30px}.cv-steps-head{position:relative;top:0}.cv-steps-head .big{display:none}}
 @media(max-width:600px){.camps2{grid-template-columns:1fr}.cv-meta{grid-template-columns:1fr 1fr}.phone{width:78%}.next-camp .in{min-height:220px}.next-camp{min-height:220px}}
+@supports not (aspect-ratio:1/1){
+  .camp2{height:0;padding-bottom:125%}
+  .shot .im{height:0;padding-bottom:125%}
+  .shot .im img{position:absolute;inset:0}
+  .phone{height:0;padding-bottom:177.7%}
+  .phone video{position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px)}
+  .f-body{height:0;padding-bottom:78%}
+}
 /* Lightbox */
 .lb{position:fixed;inset:0;z-index:100;background:rgba(20,20,22,.9);display:none;align-items:center;justify-content:center;padding:30px;backdrop-filter:blur(10px)}
 .lb.open{display:flex;animation:pageIn .4s var(--ease)}
@@ -890,7 +898,7 @@ const switcher = activeId => `<div class="switcher"><div class="wrap">
 </div></div>`;
 
 const mediaThumb = (m, cls="") => {
-  if (m.type==="image" && m.src) return `<img src="${m.src}" alt="${m.caption||""}" loading="lazy">`;
+  if (m.type==="image" && m.src) return `<img src="${m.src}" alt="${m.caption||""}" loading="eager">`;
   if (m.type==="video" && m.src) return `<video src="${m.src}" ${m.poster?`poster="${m.poster}"`:""} muted playsinline preload="metadata"></video>`;
   return "";
 };
@@ -972,7 +980,7 @@ const pages = {
         const vid = c.media.find(m=>m.type==="video"&&m.src), img = c.media.find(m=>m.type==="image"&&m.src);
         const poster = (vid&&vid.poster)||(img&&img.src)||"";
         return `<a class="camp2 rv d${(k%3)+1}" href="#c-${b.id}--${c.id}" style="--c:${b.accent||b.color}">
-          ${poster?`<img src="${poster}" alt="" loading="lazy">`:""}${vid?`<video src="${vid.src}" muted loop playsinline preload="none"></video>`:""}
+          ${poster?`<img src="${poster}" alt="" loading="eager">`:""}${vid?`<video src="${vid.src}" muted loop playsinline preload="none"></video>`:""}
           <span class="idx">${String(k+1).padStart(2,"0")}</span><span class="play">${ARROW}</span>
           <div class="meta"><span class="type">${c.type}</span><h3>${c.name}</h3></div>
         </a>`}).join("")}</div>
@@ -1013,7 +1021,7 @@ const pages = {
       </div>`:""}
       ${c.outcome?`<div class="cv-outcome rv"><small>المحصلة</small><p>${c.outcome}</p></div>`:""}
       ${imgs.length?`<div class="cv-gal-head rv"><div><span class="eyebrow">المخرجات</span><h2>من داخل الحملة</h2></div><div class="ctrl"><button data-gal="-1" aria-label="السابق">→</button><button data-gal="1" aria-label="التالي">←</button></div></div>
-      <div class="track-x rv" id="gal">${imgs.map((m,i)=>`<figure class="shot"><div class="im" data-lb="${i}"><img src="${m.src}" alt="${m.caption||""}" loading="lazy"></div>${m.caption?`<figcaption class="cap"><i>${String(i+1).padStart(2,"0")}</i>${m.caption}</figcaption>`:""}</figure>`).join("")}</div>`:""}
+      <div class="track-x rv" id="gal">${imgs.map((m,i)=>`<figure class="shot"><div class="im" data-lb="${i}"><img src="${m.src}" alt="${m.caption||""}" loading="eager"></div>${m.caption?`<figcaption class="cap"><i>${String(i+1).padStart(2,"0")}</i>${m.caption}</figcaption>`:""}</figure>`).join("")}</div>`:""}
       ${next&&next!==c?`<a class="next-camp rv" href="#c-${nextB.id}--${next.id}">${nextCover?`<img src="${nextCover}" alt="">`:""}<div class="in"><div><small>${nextB===b?"الحملة التالية":"العلامة التالية · "+nextB.name}</small><h3>${next.name}</h3></div><span class="go">${ARROW}</span></div></a>`:""}
       <div class="camp-nav" style="border:none;margin-top:30px;padding-top:0">
         <a class="btn ghost" href="#b-${b.id}">→ كل حملات ${b.name}</a>
@@ -1076,6 +1084,8 @@ window.addEventListener("hashchange", render);
 /* reveal on scroll */
 let revealIO;
 function observeReveal(){
+  if(!('IntersectionObserver' in window)){ document.querySelectorAll('.rv').forEach(e=>e.classList.add('in')); return; }
+  setTimeout(()=>document.querySelectorAll('.camp2.rv,.track-x.rv,.cv-gal-head.rv').forEach(e=>e.classList.add('in')),2500);
   revealIO && revealIO.disconnect();
   revealIO = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); revealIO.unobserve(e.target);} }),{threshold:.12,rootMargin:"0px 0px -6% 0px"});
   document.querySelectorAll(".rv:not(.in)").forEach(el=>revealIO.observe(el));
