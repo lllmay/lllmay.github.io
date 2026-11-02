@@ -372,7 +372,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .intro-bar{width:min(260px,60vw);height:2px;background:rgba(11,11,12,.08);margin:40px auto 14px;border-radius:2px;overflow:hidden}
 .intro-bar i{display:block;height:100%;width:0;background:var(--text)}
 .intro-count{font-family:'Inter';font-size:.8rem;color:var(--soft);letter-spacing:2px}
-.intro-hint{margin-top:22px;font-size:.85rem;color:var(--text);opacity:0;transition:opacity .5s;display:flex;align-items:center;gap:8px;justify-content:center}
+.intro-hint{margin-top:36px;font-size:.85rem;color:var(--text);opacity:0;transition:opacity .5s;display:flex;align-items:center;gap:8px;justify-content:center}
 .intro-hint b{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--text);display:grid;place-items:center;font-weight:400;animation:bob 1.6s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(5px)}}
 #intro.ready .intro-hint{opacity:1}
@@ -469,8 +469,6 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
   <div class="intro-in">
     <div class="intro-name"><span>ميّ</span><span>عبدالعزيز</span></div>
     <div class="intro-role">أخصائية تسويق · <span class="en">Marketing Specialist</span></div>
-    <div class="intro-bar"><i id="ibar"></i></div>
-    <div class="intro-count"><span id="icount">0</span>%</div>
     <div class="intro-hint"><b>↓</b> اضغط أو مرّر للدخول</div>
   </div>
 </div>
@@ -1122,7 +1120,6 @@ window.addEventListener("scroll", onScroll, {passive:true});
 /* intro */
 (function intro(){
   const el = document.getElementById("intro"), orb = document.getElementById("orb");
-  const bar = document.getElementById("ibar"), cnt = document.getElementById("icount");
   let done=false, ready=false, t0=performance.now();
   document.body.classList.add("locked");
   let ox=innerWidth/2, oy=innerHeight/2;
@@ -1130,10 +1127,7 @@ window.addEventListener("scroll", onScroll, {passive:true});
   el.addEventListener("pointermove", e=>{ orb.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`; });
   const ringPos = (x,y)=>{ const r=el.querySelector(".ring"); r.style.left=x+"px"; r.style.top=y+"px"; r.style.transform="translate(-50%,-50%)"; };
   ringPos(innerWidth/2, innerHeight/2);
-  const step = t=>{ const p=Math.min((t-t0)/1800,1), v=Math.round((1-Math.pow(1-p,3))*100);
-    bar.style.width=v+"%"; cnt.textContent=v;
-    if(p<1) requestAnimationFrame(step); else { ready=true; el.classList.add("ready"); setTimeout(()=>enter(),2600); } };
-  requestAnimationFrame(step);
+  setTimeout(()=>{ ready=true; el.classList.add("ready"); setTimeout(()=>enter(),2600); },1100);
   function enter(e){
     if(done||!ready) return; done=true;
     if(e && e.clientX!=null) ringPos(e.clientX,e.clientY);
