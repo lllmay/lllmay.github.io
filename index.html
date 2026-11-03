@@ -1194,6 +1194,10 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeLb(); });
 
 document.getElementById("burger").onclick = ()=>document.getElementById("menu").classList.toggle("open");
 document.getElementById("yr").textContent = new Date().getFullYear();
+/* دائماً ابدأ من أعلى الصفحة عند فتح الموقع (روابط البراندات والحملات تبقى كما هي) */
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+if (SECS.includes(location.hash.replace(/^#\/?/,""))) history.replaceState(null,"",location.pathname+location.search);
+window.scrollTo(0,0);
 render();
 </script>
 </body>
